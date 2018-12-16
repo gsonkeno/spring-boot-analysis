@@ -68,6 +68,7 @@ public class Binder {
 		BEAN_BINDERS = Collections.unmodifiableList(binders);
 	}
 
+	/**配置资源迭代器，主要实现类 SpringConfigurationPropertySources**/
 	private final Iterable<ConfigurationPropertySource> sources;
 
 	private final PlaceholdersResolver placeholdersResolver;
@@ -207,10 +208,15 @@ public class Binder {
 		Assert.notNull(target, "Target must not be null");
 		handler = (handler != null) ? handler : BindHandler.DEFAULT;
 		Context context = new Context();
+		// 如果实体类People绑定了配置文件中以people开头的配置属性值，该方法将直接
+		// 返回绑定属性后的people对象
 		T bound = bind(name, target, handler, context, false);
 		return BindResult.of(bound);
 	}
 
+	/**
+	 * 该方法执行过程中，经常会再次调用到自身，形成递归
+	 */
 	protected final <T> T bind(ConfigurationPropertyName name, Bindable<T> target,
 			BindHandler handler, Context context, boolean allowRecursiveBinding) {
 		context.clearConfigurationProperty();
@@ -251,6 +257,16 @@ public class Binder {
 		}
 	}
 
+	/**
+	 * 绑定值到返回对象上去
+	 * @param name
+	 * @param target
+	 * @param handler
+	 * @param context
+	 * @param allowRecursiveBinding
+	 * @param <T>
+	 * @return
+	 */
 	private <T> Object bindObject(ConfigurationPropertyName name, Bindable<T> target,
 			BindHandler handler, Context context, boolean allowRecursiveBinding) {
 		ConfigurationProperty property = findProperty(name, context);
@@ -278,6 +294,9 @@ public class Binder {
 		return bindBean(name, target, handler, context, allowRecursiveBinding);
 	}
 
+	/**
+	 *  判断是Map、Collection、或者Array类型Binder
+	 */
 	private AggregateBinder<?> getAggregateBinder(Bindable<?> target, Context context) {
 		Class<?> resolvedType = target.getType().resolve(Object.class);
 		if (Map.class.isAssignableFrom(resolvedType)) {
@@ -319,6 +338,7 @@ public class Binder {
 			ConfigurationProperty property) {
 		context.setConfigurationProperty(property);
 		Object result = property.getValue();
+		// 将会对result进行特殊处理,如果是字符串${aaa:hi}，处理后，将会变成hi
 		result = this.placeholdersResolver.resolvePlaceholders(result);
 		result = context.getConverter().convert(result, target);
 		return result;
@@ -336,6 +356,7 @@ public class Binder {
 		if (!allowRecursiveBinding && context.hasBoundBean(type)) {
 			return null;
 		}
+		// 第二个参数需实现Supplier接口，即实现该接口的get方法
 		return context.withBean(type, () -> {
 			Stream<?> boundBeans = BEAN_BINDERS.stream()
 					.map((b) -> b.bind(name, target, context, propertyBinder));

@@ -36,6 +36,7 @@ interface BeanBinder {
 	 * @param propertyBinder property binder
 	 * @param <T> the source type
 	 * @return a bound instance or {@code null}
+	 * 该方法只在Binder类的bindBean方法中被调用
 	 */
 	<T> T bind(ConfigurationPropertyName name, Bindable<T> target, Context context,
 			BeanPropertyBinder propertyBinder);

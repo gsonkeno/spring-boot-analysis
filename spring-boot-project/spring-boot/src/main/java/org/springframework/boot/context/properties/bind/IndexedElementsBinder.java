@@ -67,6 +67,7 @@ abstract class IndexedElementsBinder<T> extends AggregateBinder<T> {
 	protected final void bindIndexed(ConfigurationPropertyName name, Bindable<?> target,
 			AggregateElementBinder elementBinder, ResolvableType aggregateType,
 			ResolvableType elementType, IndexedCollectionSupplier result) {
+		// getContext.getSources记录着全部的配置属性值，来源不同，来自系统属性、应用属性、配置文件
 		for (ConfigurationPropertySource source : getContext().getSources()) {
 			bindIndexed(source, name, target, elementBinder, result, aggregateType,
 					elementType);

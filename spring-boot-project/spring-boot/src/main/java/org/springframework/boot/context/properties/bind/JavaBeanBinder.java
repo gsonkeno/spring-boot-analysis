@@ -55,6 +55,10 @@ class JavaBeanBinder implements BeanBinder {
 		return (bound ? beanSupplier.get() : null);
 	}
 
+	/**
+	 * 如bean为People，有name,address,age,phone四个属性
+ 	 */
+
 	private <T> boolean bind(BeanPropertyBinder propertyBinder, Bean<T> bean,
 			BeanSupplier<T> beanSupplier) {
 		boolean bound = false;
@@ -64,12 +68,17 @@ class JavaBeanBinder implements BeanBinder {
 		return bound;
 	}
 
+	/**
+	 * BeanPropertyBinder propertyBinder 用来循环绑定bean属性，整个springboot项目中只有一个实现类，在Binder类中
+	 * BeanProperty property 表示bean的属性，如people的name属性
+	 */
 	private <T> boolean bind(BeanSupplier<T> beanSupplier,
 			BeanPropertyBinder propertyBinder, BeanProperty property) {
 		String propertyName = property.getName();
 		ResolvableType type = property.getType();
 		Supplier<Object> value = property.getValue(beanSupplier);
 		Annotation[] annotations = property.getAnnotations();
+		// 整个springboot项目中只有一个实现类，在Binder类中
 		Object bound = propertyBinder.bindProperty(propertyName,
 				Bindable.of(type).withSuppliedValue(value).withAnnotations(annotations));
 		if (bound == null) {
