@@ -46,6 +46,7 @@ class JavaBeanBinder implements BeanBinder {
 			BeanPropertyBinder propertyBinder) {
 		boolean hasKnownBindableProperties = context.streamSources().anyMatch((
 				s) -> s.containsDescendantOf(name) == ConfigurationPropertyState.PRESENT);
+		// 如果target是People，则bean的properties指代People类的属性
 		Bean<T> bean = Bean.get(target, hasKnownBindableProperties);
 		if (bean == null) {
 			return null;
@@ -75,6 +76,7 @@ class JavaBeanBinder implements BeanBinder {
 	private <T> boolean bind(BeanSupplier<T> beanSupplier,
 			BeanPropertyBinder propertyBinder, BeanProperty property) {
 		String propertyName = property.getName();
+		// 当property指代address时，type是一个list列表
 		ResolvableType type = property.getType();
 		Supplier<Object> value = property.getValue(beanSupplier);
 		Annotation[] annotations = property.getAnnotations();
