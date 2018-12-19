@@ -40,6 +40,7 @@ import org.springframework.util.ConcurrentReferenceHashMap.ReferenceType;
 class SpringConfigurationPropertySources
 		implements Iterable<ConfigurationPropertySource> {
 
+	/** 子类 MutablePropertySources**/
 	private final Iterable<PropertySource<?>> sources;
 
 	private final Map<PropertySource<?>, ConfigurationPropertySource> cache = new ConcurrentReferenceHashMap<>(
