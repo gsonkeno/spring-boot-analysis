@@ -71,6 +71,7 @@ class SpringConfigurationPropertySources
 	private static class SourcesIterator
 			implements Iterator<ConfigurationPropertySource> {
 
+		/**成员变量是一个迭代器**/
 		private final Deque<Iterator<PropertySource<?>>> iterators;
 
 		private ConfigurationPropertySource next;
@@ -114,6 +115,7 @@ class SpringConfigurationPropertySources
 					return fetchNext();
 				}
 				if (isIgnored(candidate)) {
+					//再次递归时,注意上面的this.iterators.peek().next()方法会拿this.iterators.peek()迭代器的下一个元素
 					return fetchNext();
 				}
 				this.next = this.adapter.apply(candidate);
@@ -122,6 +124,7 @@ class SpringConfigurationPropertySources
 		}
 
 		private void push(ConfigurableEnvironment environment) {
+			// 向头部插入元素
 			this.iterators.push(environment.getPropertySources().iterator());
 		}
 

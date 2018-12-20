@@ -329,6 +329,8 @@ public class Binder {
 		if (name.isEmpty()) {
 			return null;
 		}
+		//遍历属性资源文件，按照上文提到的属性资源顺序，直到根据name参数找到第一个不为空的属性
+		//才返回
 		return context.streamSources()
 				.map((source) -> source.getConfigurationProperty(name))
 				.filter(Objects::nonNull).findFirst().orElse(null);
